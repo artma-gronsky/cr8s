@@ -15,9 +15,9 @@ services:
   app:
     build: .
     environment:
-      - DATABASE_URL:postgres://postgres:postgres@postgres/app_db
+      - DATABASE_URL=postgres://postgres:postgres@postgres/app_db
     ports:
       - 8000:8000
     volumes:
-    - ./:/app;     
+    - ./:/app    
 
