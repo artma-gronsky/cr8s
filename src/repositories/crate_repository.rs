@@ -3,7 +3,7 @@ use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods
 
 use crate::{
     models::{Crate, NewCrate},
-    schema::{crates, rustaceans},
+    schema::crates,
 };
 
 pub struct CrateRepository;
@@ -21,8 +21,8 @@ impl CrateRepository {
         diesel::insert_into(crates::table).values(new).get_result(c)
     }
 
-    pub fn update(c: &mut PgConnection, update: Crate) -> QueryResult<Crate> {
-        diesel::update(crates::table)
+    pub fn update(c: &mut PgConnection, id:i32,update: Crate) -> QueryResult<Crate> {
+        diesel::update(crates::table.find(id))
             .set((
                 crates::rustacean_id.eq(update.rustacean_id),
                 crates::name.eq(update.name),
