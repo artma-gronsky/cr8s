@@ -4,7 +4,7 @@ use rocket::serde::json::{json, Json, Value};
 
 use crate::{
     models::{NewRustacean, Rustacean},
-    repositories::RustaceanRepository,
+    repositories::rustaceans::RustaceanRepository,
     rocket_routes::DbConn
 };
 

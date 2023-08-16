@@ -1,8 +1,11 @@
 use clap::{Arg, Command};
+use dotenv::dotenv;
 
 extern crate cr8s;
 
 fn main() {
+    dotenv().ok();
+    
     let matches = Command::new("Cr8s")
         .about("Cr8s commands")
         .arg_required_else_help(true)
@@ -37,13 +40,16 @@ fn main() {
             Some(("users", sub_matches)) => {
                 match sub_matches.subcommand(){
                             Some(("create", arg)) =>{
-                                //crate_user()
+                                cr8s::commands::crate_user(
+                                    arg.get_one::<String>("username").unwrap().to_owned(), 
+                                    arg.get_one::<String>("password").unwrap().to_owned(),
+                                    arg.get_many::<String >("roles").unwrap().map(|v| v.to_string()).collect())  ;
                             }
                             Some(("list", arg)) =>{
-                                //list_users()
+                                cr8s::commands::list_users()
                             }
                             Some(("delete", arg)) =>{
-                                //delete_user()
+                               cr8s::commands::delete_user(*arg.get_one::<i32>("id").unwrap())
                             }
                             _ => {}
                         }

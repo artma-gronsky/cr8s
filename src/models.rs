@@ -1,7 +1,16 @@
+use std::io::Write;
+use std::str::FromStr;
+
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, AsChangeset};
-use rocket::serde::{Deserialize, Serialize};
-use crate::schema::{rustaceans, crates, users, roles, users_roles};
+use diesel::deserialize::{FromSql};
+use diesel::serialize::{Output, IsNull};
+use diesel::pg::{Pg, PgValue};
+use diesel::serialize::ToSql;
+use diesel::{Insertable, Queryable, AsChangeset, Associations, Identifiable, AsExpression, FromSqlRow};
+use diesel::sql_types::Text;
+use serde::{Serialize, Deserialize};
+use crate::schema::*;
+
 
 #[derive(Queryable, AsChangeset, Deserialize, Serialize)]
 pub struct Rustacean{
@@ -44,7 +53,7 @@ pub struct NewCrate{
     pub description: Option<String>
 }
 
-#[derive(Queryable, AsChangeset)]
+#[derive(Queryable, Debug, Identifiable, Serialize)]
 pub struct User{
     pub id: i32,
     pub username: String,
@@ -61,7 +70,7 @@ pub struct NewUser{
 
 
 
-#[derive(Queryable, AsChangeset)]
+#[derive(Queryable, Debug, Identifiable, Serialize)]
 pub struct Role{
     pub id: i32,
     pub code: String,
@@ -76,17 +85,20 @@ pub struct NewRole{
     pub name: String,
 }
 
-#[derive(Queryable)]
+
+#[derive(Queryable, Associations, Identifiable, Debug)]
 #[diesel(belongs_to(User))]
 #[diesel(belongs_to(Role))]
-pub struct UserRole{
+#[diesel(table_name=users_roles)]
+pub struct UserRole {
     pub id: i32,
-    pub user_id:i32,
-    pub role_id: i32
+    pub user_id: i32,
+    pub role_id: i32,
 }
 
+
 #[derive(Insertable)]
-#[diesel(table_name=users_roles)]
+#[diesel(table_name=users_roles)] 
 pub struct NewUserRole{
     pub user_id:i32,
     pub role_id: i32

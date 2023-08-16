@@ -1,6 +1,6 @@
 use crate::{
     models::{Crate, NewCrate},
-    repositories::crate_repository::CrateRepository, 
+    repositories::crates::CrateRepository, 
     rocket_routes::{DbConn, server_error},
 };
 use rocket::{
