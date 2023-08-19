@@ -1,4 +1,4 @@
-use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods, dsl::IntervalDsl, BelongingToDsl};
+use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods, BelongingToDsl};
 use crate::models::{NewRole, Role, User, UserRole};
 use crate::schema::roles;
 

@@ -2,7 +2,7 @@ use crate::models::{NewUser, NewUserRole, Role, User, UserRole};
 use crate::repositories::roles::RoleRepository;
 use crate::schema::users;
 use crate::schema::users_roles;
-use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl};
+use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods};
 
 pub struct UserRepository;
 
@@ -38,6 +38,7 @@ impl UserRepository {
     }
 
     pub fn delete(c: &mut PgConnection, id: i32) -> QueryResult<usize> {
+        diesel::delete(users_roles::table.filter(users_roles::user_id.eq(id))).execute(c)?;
         diesel::delete(users::table.find(id)).execute(c)
     }
 
