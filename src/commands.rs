@@ -2,7 +2,7 @@ use argon2::{Argon2, PasswordHasher};
 use argon2::password_hash::SaltString;
 use argon2::password_hash::rand_core::{OsRng};
 use diesel::{Connection, PgConnection};
-use crate::models::{NewUser, Role, User};
+use crate::models::{NewUser};
 use crate::repositories::roles::RoleRepository;
 use crate::repositories::users::UserRepository;
 
@@ -31,7 +31,7 @@ pub fn crate_user(username: String, password: String, role_codes: Vec<String>){
 
 pub fn list_users(){
     let mut c = get_connection();
-    let users = UserRepository::get_all(&mut c, 100).unwrap();
+    let users = UserRepository::find_all_with_roles(&mut c).unwrap();
 
     println!("User list:");
     for (idx,user) in users.iter().enumerate() {

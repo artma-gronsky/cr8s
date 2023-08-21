@@ -1,12 +1,20 @@
 use crate::models::{NewUser, NewUserRole, Role, User, UserRole};
 use crate::repositories::roles::RoleRepository;
-use crate::schema::users;
-use crate::schema::users_roles;
-use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods};
+use crate::schema::{users, roles, users_roles};
+use diesel::*;
 
 pub struct UserRepository;
 
 impl UserRepository {
+    pub fn find_all_with_roles(c: &mut PgConnection) -> QueryResult<Vec<(User, Vec<(UserRole,Role)>)>>{
+        let users: Vec<User> = users::table.load(c)?;
+        let results = users_roles::table.inner_join(roles::table)
+        .load::<(UserRole,Role)>(c)?
+        .grouped_by(&users); 
+
+        Ok(users.into_iter().zip(results).collect())
+    }
+
     pub fn create(
         c: &mut PgConnection,
         new_user: NewUser,
@@ -44,5 +52,9 @@ impl UserRepository {
 
     pub fn get_all(c: &mut PgConnection, limit: i64) -> QueryResult<Vec<User>> {
         users::table.limit(limit).load(c)
+    }
+
+    pub fn get_by_name(c: &mut PgConnection, username: &str) -> QueryResult<User>{
+        users::table.filter(users::username.eq(username)).first(c)
     }
 }

@@ -31,7 +31,7 @@ fn main() {
                     Command::new("delete")
                         .about("Delete user by id")
                         .arg_required_else_help(true)
-                        .arg(Arg::new("id").required(true)),
+                        .arg(Arg::new("id").required(true).value_parser(clap::value_parser!(i32))),
                 ),
         ).get_matches();
 
@@ -45,7 +45,7 @@ fn main() {
                                     arg.get_one::<String>("password").unwrap().to_owned(),
                                     arg.get_many::<String >("roles").unwrap().map(|v| v.to_string()).collect())  ;
                             }
-                            Some(("list", arg)) =>{
+                            Some(("list", _)) =>{
                                 cr8s::commands::list_users()
                             }
                             Some(("delete", arg)) =>{

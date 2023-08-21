@@ -1,13 +1,5 @@
-use std::io::Write;
-use std::str::FromStr;
-
 use chrono::NaiveDateTime;
-use diesel::deserialize::{FromSql};
-use diesel::serialize::{Output, IsNull};
-use diesel::pg::{Pg, PgValue};
-use diesel::serialize::ToSql;
-use diesel::{Insertable, Queryable, AsChangeset, Associations, Identifiable, AsExpression, FromSqlRow};
-use diesel::sql_types::Text;
+use diesel::{Insertable, Queryable, AsChangeset, Associations, Identifiable};
 use serde::{Serialize, Deserialize};
 use crate::schema::*;
 
