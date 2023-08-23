@@ -1,5 +1,5 @@
-use argon2::{PasswordHash, PasswordVerifier, password_hash::Error};
-use rand::{Rng, distributions::Alphanumeric};
+use argon2::{PasswordHash,PasswordHasher, PasswordVerifier, Argon2, password_hash::{Error, SaltString}};
+use rand::{Rng, distributions::Alphanumeric, rngs::OsRng};
 use serde::Deserialize;
 
 use crate::models::User;
@@ -22,4 +22,10 @@ pub fn authrize_user(user: &User, credentials: &Credetials) -> Result<String, Er
         .sample_iter(&Alphanumeric)
         .take(128).map(char::from).collect()
     )
+}
+
+pub fn hash_password(password: &str) -> Result<String, Error>{
+    let salt = SaltString::generate(OsRng);
+    let argon = Argon2::default();
+    argon.hash_password(password.as_bytes(), &salt).map(|result| result.to_string())
 }
