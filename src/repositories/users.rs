@@ -57,4 +57,7 @@ impl UserRepository {
     pub fn get_by_name(c: &mut PgConnection, username: &str) -> QueryResult<User>{
         users::table.filter(users::username.eq(username)).first(c)
     }
+    pub fn get_by_id(c: &mut PgConnection, id: i32) -> QueryResult<User>{
+        users::table.find(id).first(c)
+    }
 }

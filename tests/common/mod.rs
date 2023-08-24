@@ -2,6 +2,7 @@ use reqwest::{blocking::Client, StatusCode};
 use rocket::serde::json::{Value, serde_json::json};
 
 pub static CRATES_BASE_URL: &str = "http://127.0.0.1:8000/crates";
+pub static LOGIN_BASE_URL: &str = "http://127.0.0.1:8000/login";
 
 #[ignore]
 pub fn crate_test_rustacean(client: &Client) -> Value{
