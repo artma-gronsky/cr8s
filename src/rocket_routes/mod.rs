@@ -38,7 +38,7 @@ impl<'r> FromRequest<'r> for User {
 
         if let Some(session_value) = session_header{
             let mut cache = request.guard::<Connection<CacheConn>>().await.expect("Can not connect to Redis in request guard");
-            let user_id_result = cache.get::<_, i32>(session_value).await;
+            let user_id_result = cache.get::<_, i32>(format!("sessions/{}", session_value)).await;
 
             if let Ok(user_id)  = user_id_result{
                 let db = request.guard::<DbConn>().await.expect("Can not connect to Postgres in request guard");
@@ -50,7 +50,6 @@ impl<'r> FromRequest<'r> for User {
                     return rocket::outcome::Outcome::Success(user);
                 }
             }
-
         };
 
         rocket::outcome::Outcome::Failure((Status::Unauthorized, ()))

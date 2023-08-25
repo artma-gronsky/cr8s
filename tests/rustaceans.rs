@@ -6,7 +6,7 @@ mod common;
 #[test]
 fn test_get_rustacens(){
     //Setup
-    let client  = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean1 = common::crate_test_rustacean(&client);
     let rustacean2 = common::crate_test_rustacean(&client);
 
@@ -27,7 +27,7 @@ fn test_get_rustacens(){
  
 #[test]
 fn test_create_rustacean(){
-    let client  = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let response = client.post("http://127.0.0.1:8000/rustaceans/")
     .json(&json!({
         "name": "name",
@@ -51,7 +51,7 @@ fn test_create_rustacean(){
 
 #[test]
 fn test_view_rustacens(){
-    let client  = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::crate_test_rustacean(&client);
     let response = client.get(format!("http://127.0.0.1:8000/rustaceans/{}",rustacean["id"])).send().unwrap();
 
@@ -64,7 +64,7 @@ fn test_view_rustacens(){
 
 #[test]
 fn test_update_rustacens(){
-    let client  = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::crate_test_rustacean(&client);
     let response = client.put(format!("http://127.0.0.1:8000/rustaceans/{}",rustacean["id"]))
     .json(&json!({  "name": "updated_name",
@@ -85,7 +85,7 @@ fn test_update_rustacens(){
 
 #[test]
 fn test_delete_rustacens(){
-    let client  = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::crate_test_rustacean(&client);
 
     let response = client.delete(format!("http://127.0.0.1:8000/rustaceans/{}",rustacean["id"])).send().unwrap();

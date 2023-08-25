@@ -7,7 +7,7 @@ mod common;
 
 #[test]
 fn test_create_crate(){
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
 
     let rustacean = common::crate_test_rustacean(&client);
 
@@ -41,7 +41,7 @@ fn test_create_crate(){
 
 #[test]
 fn test_update_crate(){
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
 
     let a_crate = common::crate_test_crate(&client);
 
@@ -74,7 +74,7 @@ fn test_update_crate(){
 
 #[test]
 fn test_veiw_crates(){
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
 
     let crate1 = common::crate_test_crate(&client);
     let crate2 = common::crate_test_crate(&client);
@@ -96,7 +96,7 @@ fn test_veiw_crates(){
 
 #[test]
 fn get_one_crate(){
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
 
     let a_crate = common::crate_test_crate(&client);
 
@@ -111,7 +111,7 @@ fn get_one_crate(){
 
 #[test]
 fn delete_crate(){
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
 
     let a_crate = common::crate_test_crate(&client);
 
