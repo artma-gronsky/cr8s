@@ -1,4 +1,4 @@
-use crate::models::{NewUser, NewUserRole, Role, User, UserRole};
+use crate::models::{NewUser, NewUserRole, Role, User, UserRole, RoleCode};
 use crate::repositories::roles::RoleRepository;
 use crate::schema::{users, roles, users_roles};
 use diesel::*;
@@ -18,7 +18,7 @@ impl UserRepository {
     pub fn create(
         c: &mut PgConnection,
         new_user: NewUser,
-        role_codes: Vec<String>,
+        role_codes: Vec<RoleCode>,
     ) -> QueryResult<User> {
         let user = diesel::insert_into(users::table)
             .values(new_user)
@@ -29,7 +29,7 @@ impl UserRepository {
                 if let Ok(role_by_code) = RoleRepository::find_by_code(c, &code) {
                     role_by_code
                 } else {
-                    RoleRepository::create(c, code.clone(), code.clone())?
+                    RoleRepository::create(c, code.clone(), code.to_string())?
                 }
             };
 

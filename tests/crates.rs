@@ -1,8 +1,6 @@
 use reqwest::{blocking::Client, StatusCode};
 use rocket::serde::json::{serde_json::json, Value};
 
-
-
 mod common;
 
 #[test]
@@ -126,3 +124,14 @@ fn delete_crate(){
     assert_eq!(response.status(), StatusCode::NO_CONTENT);
 }
 
+#[test]
+fn delete_crate_wrong_user_role_failed(){
+    let client = common::get_client_with_logged_in_viewer();
+
+    let some_crate_id = 1;
+    let response = client.delete(format!("{}/{}", common::CRATES_BASE_URL, some_crate_id)).send().unwrap();
+    assert_eq!(response.status(), StatusCode::FORBIDDEN);
+
+    let body = response.json::<Value>();
+    assert!(body.is_err());
+}

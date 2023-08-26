@@ -1,15 +1,15 @@
 use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods, BelongingToDsl};
-use crate::models::{NewRole, Role, User, UserRole};
+use crate::models::{NewRole, Role, User, UserRole, RoleCode};
 use crate::schema::roles;
 
 pub struct RoleRepository;
 
 impl RoleRepository {
-    pub fn find_by_code(c: &mut PgConnection, code: &String) -> QueryResult<Role>{
+    pub fn find_by_code(c: &mut PgConnection, code: &RoleCode) -> QueryResult<Role>{
         roles::table.filter(roles::code.eq(code)).first(c)
     }
     
-    pub fn create(c: &mut PgConnection, code: String, name: String) ->  QueryResult<Role>{
+    pub fn create(c: &mut PgConnection, code: RoleCode, name: String) ->  QueryResult<Role>{
         let new_role = NewRole{
             code,
             name

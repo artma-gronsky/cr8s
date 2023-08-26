@@ -1,6 +1,10 @@
-use std::process::Command;
-use reqwest::{blocking::{Client, ClientBuilder}, StatusCode, header::{HeaderMap, self, HeaderValue}};
+use reqwest::{
+    blocking::{Client, ClientBuilder},
+    header::{self, HeaderMap, HeaderValue},
+    StatusCode,
+};
 use rocket::serde::json::{serde_json::json, Value};
+use std::process::Command;
 
 pub static CRATES_BASE_URL: &str = "http://127.0.0.1:8000/crates";
 pub static LOGIN_BASE_URL: &str = "http://127.0.0.1:8000/login";
@@ -73,15 +77,23 @@ pub fn delete_test_crate(client: &Client, a_crate: Value) {
 }
 
 pub fn get_client_with_logged_in_admin() -> Client {
+    get_client_with_logged("admin")
+}
+
+pub fn get_client_with_logged_in_viewer() -> Client {
+    get_client_with_logged("viewer")
+}
+
+fn get_client_with_logged(role: &str) -> Client {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--bin")
         .arg("cli")
         .arg("users")
         .arg("create")
-        .arg("testadmin")
+        .arg(format!("test{}", role))
         .arg("1234")
-        .arg("admin")
+        .arg(role)
         .output()
         .unwrap();
 
@@ -90,7 +102,7 @@ pub fn get_client_with_logged_in_admin() -> Client {
     let client = Client::new();
 
     let request_body = json!({
-        "username":"testadmin",
+        "username":format!("test{}",role),
         "password": "1234"
     });
 
@@ -104,7 +116,6 @@ pub fn get_client_with_logged_in_admin() -> Client {
 
     let json: Value = response.json().unwrap();
     assert!(json.get("token").is_some());
-
 
     let token = json["token"].as_str().unwrap();
     let mut headers = HeaderMap::new();

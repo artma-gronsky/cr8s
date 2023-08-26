@@ -1,6 +1,8 @@
+use std::str::FromStr;
+
 use diesel::{Connection, PgConnection};
 use crate::auth;
-use crate::models::{NewUser};
+use crate::models::{NewUser, RoleCode};
 use crate::repositories::roles::RoleRepository;
 use crate::repositories::users::UserRepository;
 
@@ -16,6 +18,8 @@ pub fn crate_user(username: String, password: String, role_codes: Vec<String>){
     let new_user = NewUser{username, password: password_hash}; 
     let mut c = get_connection();
     
+
+    let role_codes = role_codes.iter().map(|v| RoleCode::from_str(v).unwrap_or(Default::default())).collect();
     let user = UserRepository::create(&mut c, new_user, role_codes).unwrap();
     
     println!("User created {:?}", user);
