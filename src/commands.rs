@@ -1,15 +1,13 @@
-use std::str::FromStr;
-
 use crate::auth;
+use crate::mail::HtmlMailer;
 use crate::models::{NewUser, RoleCode};
 use crate::repositories::crates::CrateRepository;
 use crate::repositories::roles::RoleRepository;
 use crate::repositories::users::UserRepository;
 use chrono::{Datelike, Utc};
 use diesel::{Connection, PgConnection};
-use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
-use lettre::{SmtpTransport, Transport, Address};
+use std::str::FromStr;
 use tera::{Context, Tera};
 
 fn get_connection() -> PgConnection {
@@ -74,29 +72,24 @@ pub fn send_digest(receiver_email: String, hours_since: i32) {
         context.insert("crates", &crates);
         let year: i32 = Utc::now().year();
         context.insert("year", &year);
-        let html_body = tera.render("email/digest.html", &context).unwrap();
 
-        let message = lettre::Message::builder()
-            .subject("Cr8s digest")
-            .from(lettre::message::Mailbox::new(Some("info@cr8s.com".to_string()), Address::new("info" ,"cr8s.com").unwrap()))
-            .to(receiver_email.parse().unwrap())
-            .header(ContentType::TEXT_HTML)
-            .body(html_body)
-            .unwrap();
-
-        let smtp_host = 
-            std::env::var("SMTP_HOST").expect("Cannot load smtp host from env");
+        let smtp_host = std::env::var("SMTP_HOST").expect("Cannot load smtp host from env");
         let smtp_username =
             std::env::var("SMTP_USERNAME").expect("Cannot load smtp username from env");
         let smtp_password =
             std::env::var("SMTP_PASSWORD").expect("Cannot load smtp password from env");
 
         let creadentials = Credentials::new(smtp_username, smtp_password);
-        let mailer = SmtpTransport::relay(&smtp_host)
-            .unwrap()
-            .credentials(creadentials)
-            .build();
 
-        mailer.send(&message).unwrap();
+        let mailer = HtmlMailer {
+            creadentials,
+            smtp_host,
+            template_egine: tera,
+        };
+
+        mailer
+            .send_email(&receiver_email, "email/digest.html", &context).unwrap_or_else(|e| {
+                panic!("Problem with email sending: {}", e);
+            });
     }
 }
