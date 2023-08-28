@@ -1,4 +1,4 @@
-use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods};
+use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods, dsl::{now, IntervalDsl}};
 
 
 use crate::{
@@ -35,5 +35,9 @@ impl CrateRepository {
 
     pub fn delete(c: &mut PgConnection, id: i32) -> QueryResult<usize>{
         diesel::delete(crates::table.find(id)).execute(c)
+    }
+ 
+    pub(crate) fn find_since(c: &mut PgConnection, hours_since: i32) -> QueryResult<Vec<Crate>>{
+        crates::table.filter(crates::created_at.ge(now - hours_since.hours())).load(c)
     }
 }
