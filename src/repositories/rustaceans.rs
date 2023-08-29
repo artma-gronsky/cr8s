@@ -1,6 +1,6 @@
-use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods};
 use crate::models::{NewRustacean, Rustacean};
 use crate::schema::rustaceans;
+use diesel::{ExpressionMethods, PgConnection, QueryDsl, QueryResult, RunQueryDsl};
 
 pub struct RustaceanRepository;
 

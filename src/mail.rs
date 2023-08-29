@@ -1,8 +1,8 @@
+use lettre::transport::smtp::response::Response;
 use lettre::{
     message::header::ContentType, transport::smtp::authentication::Credentials, Address,
     SmtpTransport, Transport,
 };
-use lettre::transport::smtp::response::Response;
 use tera::{Context, Tera};
 
 pub struct HtmlMailer {

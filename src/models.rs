@@ -1,31 +1,36 @@
 use std::{io::Write, str::FromStr};
 
-use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, AsChangeset, Associations, Identifiable, expression::AsExpression, sql_types::{Text}, deserialize::{FromSql, self, FromSqlRow}, serialize::{ToSql, self, Output, IsNull}, pg::{PgValue, Pg}};
-use serde::{Serialize, Deserialize};
 use crate::schema::*;
-
+use chrono::NaiveDateTime;
+use diesel::{
+    deserialize::{self, FromSql, FromSqlRow},
+    expression::AsExpression,
+    pg::{Pg, PgValue},
+    serialize::{self, IsNull, Output, ToSql},
+    sql_types::Text,
+    AsChangeset, Associations, Identifiable, Insertable, Queryable,
+};
+use serde::{Deserialize, Serialize};
 
 #[derive(Queryable, AsChangeset, Deserialize, Serialize)]
-pub struct Rustacean{
+pub struct Rustacean {
     #[serde(skip_deserializing)]
-    pub id: i32, 
+    pub id: i32,
     pub name: String,
     pub email: String,
     #[serde(skip_deserializing)]
     pub created_at: NaiveDateTime,
 }
 
-
 #[derive(Insertable, Deserialize)]
 #[diesel(table_name=rustaceans)]
-pub struct NewRustacean{
+pub struct NewRustacean {
     pub name: String,
     pub email: String,
 }
 
 #[derive(Queryable, AsChangeset, Serialize, Deserialize)]
-pub struct Crate{
+pub struct Crate {
     #[serde(skip_deserializing)]
     pub id: i32,
     pub rustacean_id: i32,
@@ -39,47 +44,44 @@ pub struct Crate{
 
 #[derive(Insertable, Deserialize)]
 #[diesel(table_name=crates)]
-pub struct NewCrate{
+pub struct NewCrate {
     pub rustacean_id: i32,
     pub name: String,
     pub code: String,
     pub version: String,
-    pub description: Option<String>
+    pub description: Option<String>,
 }
 
 #[derive(Queryable, Debug, Identifiable, Serialize)]
-pub struct User{
+pub struct User {
     pub id: i32,
     pub username: String,
     #[serde(skip_serializing)]
     pub password: String,
-    pub created_at: NaiveDateTime    
+    pub created_at: NaiveDateTime,
 }
 
 #[derive(Insertable)]
 #[diesel(table_name=users)]
-pub struct NewUser{
+pub struct NewUser {
     pub username: String,
     pub password: String,
 }
 
-
-
 #[derive(Queryable, Debug, Identifiable, Serialize)]
-pub struct Role{
+pub struct Role {
     pub id: i32,
     pub code: RoleCode,
     pub name: String,
-    pub created_at: NaiveDateTime    
+    pub created_at: NaiveDateTime,
 }
 
 #[derive(Insertable)]
 #[diesel(table_name=roles)]
-pub struct NewRole{
+pub struct NewRole {
     pub code: RoleCode,
     pub name: String,
 }
-
 
 #[derive(Queryable, Associations, Identifiable, Debug)]
 #[diesel(belongs_to(User))]
@@ -91,22 +93,21 @@ pub struct UserRole {
     pub role_id: i32,
 }
 
-
 #[derive(Insertable)]
-#[diesel(table_name=users_roles)] 
-pub struct NewUserRole{
-    pub user_id:i32,
-    pub role_id: i32
+#[diesel(table_name=users_roles)]
+pub struct NewUserRole {
+    pub user_id: i32,
+    pub role_id: i32,
 }
 
 #[derive(AsExpression, Debug, Serialize, Deserialize, FromSqlRow, Clone, Default, PartialEq)]
 #[diesel(sql_type=Text)]
-  pub enum RoleCode {
+pub enum RoleCode {
     Admin,
     Editor,
-    #[default] Viewer
+    #[default]
+    Viewer,
 }
-
 
 impl FromStr for RoleCode {
     type Err = ();
@@ -115,12 +116,12 @@ impl FromStr for RoleCode {
             "admin" => Ok(RoleCode::Admin),
             "editor" => Ok(RoleCode::Editor),
             "viewer" => Ok(RoleCode::Viewer),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }
 
-impl ToString for RoleCode{
+impl ToString for RoleCode {
     fn to_string(&self) -> String {
         match self {
             RoleCode::Admin => "admin".to_string(),
@@ -130,27 +131,25 @@ impl ToString for RoleCode{
     }
 }
 
-impl FromSql<Text, Pg> for RoleCode
-{
+impl FromSql<Text, Pg> for RoleCode {
     fn from_sql(value: PgValue) -> deserialize::Result<Self> {
         match value.as_bytes() {
             b"admin" => Ok(RoleCode::Admin),
             b"editor" => Ok(RoleCode::Editor),
             b"viewer" => Ok(RoleCode::Viewer),
-            _ => Ok(RoleCode::Viewer)
+            _ => Ok(RoleCode::Viewer),
         }
     }
 }
 
-impl ToSql<Text, Pg> for RoleCode
-{
+impl ToSql<Text, Pg> for RoleCode {
     fn to_sql<'b>(&'b self, out: &mut Output<'b, '_, Pg>) -> serialize::Result {
         let _ = match self {
             RoleCode::Admin => out.write_all(b"admin"),
             RoleCode::Viewer => out.write_all(b"viewer"),
-            RoleCode::Editor => out.write_all(b"editor")
+            RoleCode::Editor => out.write_all(b"editor"),
         };
 
-        Ok(IsNull::No) 
+        Ok(IsNull::No)
     }
 }

@@ -1,16 +1,19 @@
-use crate::models::{NewUser, NewUserRole, Role, User, UserRole, RoleCode};
+use crate::models::{NewUser, NewUserRole, Role, RoleCode, User, UserRole};
 use crate::repositories::roles::RoleRepository;
-use crate::schema::{users, roles, users_roles};
+use crate::schema::{roles, users, users_roles};
 use diesel::*;
 
 pub struct UserRepository;
 
 impl UserRepository {
-    pub fn find_all_with_roles(c: &mut PgConnection) -> QueryResult<Vec<(User, Vec<(UserRole,Role)>)>>{
+    pub fn find_all_with_roles(
+        c: &mut PgConnection,
+    ) -> QueryResult<Vec<(User, Vec<(UserRole, Role)>)>> {
         let users: Vec<User> = users::table.load(c)?;
-        let results = users_roles::table.inner_join(roles::table)
-        .load::<(UserRole,Role)>(c)?
-        .grouped_by(&users); 
+        let results = users_roles::table
+            .inner_join(roles::table)
+            .load::<(UserRole, Role)>(c)?
+            .grouped_by(&users);
 
         Ok(users.into_iter().zip(results).collect())
     }
@@ -54,10 +57,10 @@ impl UserRepository {
         users::table.limit(limit).load(c)
     }
 
-    pub fn get_by_name(c: &mut PgConnection, username: &str) -> QueryResult<User>{
+    pub fn get_by_name(c: &mut PgConnection, username: &str) -> QueryResult<User> {
         users::table.filter(users::username.eq(username)).first(c)
     }
-    pub fn get_by_id(c: &mut PgConnection, id: i32) -> QueryResult<User>{
+    pub fn get_by_id(c: &mut PgConnection, id: i32) -> QueryResult<User> {
         users::table.find(id).first(c)
     }
 }

@@ -1,5 +1,7 @@
-use diesel::{PgConnection, QueryDsl, QueryResult, RunQueryDsl, ExpressionMethods, dsl::{now, IntervalDsl}};
-
+use diesel::{
+    dsl::{now, IntervalDsl},
+    ExpressionMethods, PgConnection, QueryDsl, QueryResult, RunQueryDsl,
+};
 
 use crate::{
     models::{Crate, NewCrate},
@@ -21,7 +23,7 @@ impl CrateRepository {
         diesel::insert_into(crates::table).values(new).get_result(c)
     }
 
-    pub fn update(c: &mut PgConnection, id:i32,update: Crate) -> QueryResult<Crate> {
+    pub fn update(c: &mut PgConnection, id: i32, update: Crate) -> QueryResult<Crate> {
         diesel::update(crates::table.find(id))
             .set((
                 crates::rustacean_id.eq(update.rustacean_id),
@@ -30,14 +32,16 @@ impl CrateRepository {
                 crates::version.eq(update.version),
                 crates::description.eq(update.description),
             ))
-             .get_result(c)
+            .get_result(c)
     }
 
-    pub fn delete(c: &mut PgConnection, id: i32) -> QueryResult<usize>{
+    pub fn delete(c: &mut PgConnection, id: i32) -> QueryResult<usize> {
         diesel::delete(crates::table.find(id)).execute(c)
     }
- 
-    pub(crate) fn find_since(c: &mut PgConnection, hours_since: i32) -> QueryResult<Vec<Crate>>{
-        crates::table.filter(crates::created_at.ge(now - hours_since.hours())).load(c)
+
+    pub(crate) fn find_since(c: &mut PgConnection, hours_since: i32) -> QueryResult<Vec<Crate>> {
+        crates::table
+            .filter(crates::created_at.ge(now - hours_since.hours()))
+            .load(c)
     }
 }

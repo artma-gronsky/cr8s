@@ -88,7 +88,8 @@ pub fn send_digest(receiver_email: String, hours_since: i32) {
         };
 
         mailer
-            .send_email(&receiver_email, "email/digest.html", &context).unwrap_or_else(|e| {
+            .send_email(&receiver_email, "email/digest.html", &context)
+            .unwrap_or_else(|e| {
                 panic!("Problem with email sending: {}", e);
             });
     }

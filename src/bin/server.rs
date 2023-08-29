@@ -3,11 +3,10 @@ use dotenv::dotenv;
 use rocket_db_pools::Database;
 use std::env;
 
-
 #[rocket::main]
 async fn main() {
     dotenv().ok();
- 
+
     print_env_variable();
 
     let _ = rocket::build()
@@ -16,7 +15,6 @@ async fn main() {
             rocket::routes![
                 // options
                 cr8s::rocket_routes::options,
-
                 // rustaceans
                 cr8s::rocket_routes::rustaceans::get_rustacean,
                 cr8s::rocket_routes::rustaceans::get_rustaceans,
@@ -29,7 +27,6 @@ async fn main() {
                 cr8s::rocket_routes::crates::create,
                 cr8s::rocket_routes::crates::update,
                 cr8s::rocket_routes::crates::delete,
-
                 //authorization
                 cr8s::rocket_routes::authorization::login,
                 cr8s::rocket_routes::authorization::me
