@@ -1,5 +1,4 @@
 extern crate cr8s;
-
 use dotenv::dotenv;
 use rocket_db_pools::Database;
 use std::env;
@@ -15,6 +14,9 @@ async fn main() {
         .mount(
             "/",
             rocket::routes![
+                // options
+                cr8s::rocket_routes::options,
+
                 // rustaceans
                 cr8s::rocket_routes::rustaceans::get_rustacean,
                 cr8s::rocket_routes::rustaceans::get_rustaceans,
@@ -33,6 +35,7 @@ async fn main() {
             ],
         )
         .attach(cr8s::rocket_routes::DbConn::fairing())
+        .attach(cr8s::rocket_routes::Cors)
         .attach(cr8s::rocket_routes::CacheConn::init())
         .launch()
         .await;
