@@ -13,6 +13,10 @@ pub struct Credetials {
     pub password: String,
 }
 
+
+/// Authrize user by credentials 
+///
+/// Returns Result with token string.
 pub fn authrize_user(user: &User, credentials: &Credetials) -> Result<String, Error> {
     let password_hash = PasswordHash::new(&user.password)?;
     let argon = argon2::Argon2::default();
@@ -25,6 +29,17 @@ pub fn authrize_user(user: &User, credentials: &Credetials) -> Result<String, Er
         .collect())
 }
 
+
+/// Function of hashing passwords 
+///
+/// # Examples
+///
+/// ```
+/// use cr8s::auth::hash_password;
+/// let passwors = "SomeYourPassword";
+/// let hash_result = hash_password(passwors);
+/// assert!(hash_result.is_some());
+/// ```
 pub fn hash_password(password: &str) -> Result<String, Error> {
     let salt = SaltString::generate(OsRng);
     let argon = Argon2::default();
