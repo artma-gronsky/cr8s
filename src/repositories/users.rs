@@ -6,6 +6,7 @@ use diesel::*;
 pub struct UserRepository;
 
 impl UserRepository {
+    #[allow(clippy::type_complexity)]
     pub fn find_all_with_roles(
         c: &mut PgConnection,
     ) -> QueryResult<Vec<(User, Vec<(UserRole, Role)>)>> {

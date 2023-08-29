@@ -18,7 +18,7 @@ impl HtmlMailer {
         template: &str,
         context: &Context,
     ) -> Result<Response, Box<dyn std::error::Error>> {
-        let html_body = self.template_egine.render(template, &context)?;
+        let html_body = self.template_egine.render(template, context)?;
 
         let message = lettre::Message::builder()
             .subject("Cr8s digest")

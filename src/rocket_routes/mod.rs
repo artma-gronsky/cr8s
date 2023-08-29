@@ -48,8 +48,9 @@ pub fn server_error(e: Box<dyn std::error::Error>) -> Custom<rocket::serde::json
     Custom(Status::InternalServerError, json!("Error"))
 }
 
-#[rocket::options("/<_route_arg..>")]
-pub fn options(_route_arg: Option<std::path::PathBuf>) {
+#[allow(clippy::let_unit_value)]
+#[rocket::options("/<_..>")]
+pub fn options() {
     //Just to add CORS HEADERS via fairing.
 }
 

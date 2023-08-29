@@ -65,7 +65,7 @@ pub fn send_digest(receiver_email: String, hours_since: i32) {
 
     let crates = CrateRepository::find_since(&mut c, hours_since).unwrap();
 
-    if crates.len() > 0 {
+    if !crates.is_empty() {
         println!("Send the digest for {} crates", crates.len());
         let tera = load_template_egine();
         let mut context = Context::new();
