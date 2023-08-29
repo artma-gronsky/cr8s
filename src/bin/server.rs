@@ -31,7 +31,8 @@ async fn main() {
                 cr8s::rocket_routes::crates::delete,
 
                 //authorization
-                cr8s::rocket_routes::authorization::login
+                cr8s::rocket_routes::authorization::login,
+                cr8s::rocket_routes::authorization::me
             ],
         )
         .attach(cr8s::rocket_routes::DbConn::fairing())

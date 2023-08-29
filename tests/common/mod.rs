@@ -8,6 +8,7 @@ use std::process::Command;
 
 pub static CRATES_BASE_URL: &str = "http://127.0.0.1:8000/crates";
 pub static LOGIN_BASE_URL: &str = "http://127.0.0.1:8000/login";
+pub static BASE_URL: &str = "http://127.0.0.1:8000";
 
 #[ignore]
 pub fn crate_test_rustacean(client: &Client) -> Value {

@@ -6,7 +6,7 @@ use rocket::{
 
 use crate::{
     auth::{self, Credetials},
-    repositories::users::UserRepository,
+    repositories::users::UserRepository, models::User,
 };
 use rocket_db_pools::{deadpool_redis::redis::AsyncCommands, Connection};
 
@@ -40,3 +40,12 @@ pub async fn login(
         .map(|_| json!({"token": session_id}))
         .map_err(|e| server_error(e.into()))
 }
+
+#[rocket::get("/me")]
+pub async fn me(
+    user: User
+) -> Result<Value, Custom<Value>> {
+    Ok(json!(user))
+}
+
+
